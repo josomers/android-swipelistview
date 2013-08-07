@@ -770,20 +770,16 @@ public class SwipeListViewTouchListener implements View.OnTouchListener {
                 if (minFlingVelocity <= velocityX && velocityX <= maxFlingVelocity && velocityY * 2 < velocityX) {
                     swapRight = velocityTracker.getXVelocity() > 0;
                     Log.d("SwipeListView","swapRight: " + swapRight + " - swipingRight: " + swipingRight);
-                    if (swapRight != swipingRight && swipeActionLeft != swipeActionRight) {
-                        swap = false;
-                    } else if (opened.get(downPosition) && openedRight.get(downPosition) && swapRight) {
-                        swap = false;
-                    } else if (opened.get(downPosition) && !openedRight.get(downPosition) && !swapRight) {
-                        swap = false;
-                    } else {
-                        swap = true;
-                    }
+                    swap = !(deltaX < 0 && swapRight || deltaX > 0 && !swapRight)
+                            && !(swapRight != swipingRight && swipeActionLeft != swipeActionRight)
+                            && !(opened.get(downPosition) && openedRight.get(downPosition) && swapRight) && !(opened.get(downPosition) && !openedRight.get(downPosition) && !swapRight);
                 } else if (Math.abs(deltaX) > viewWidth / 2) {
                     swap = true;
                     swapRight = deltaX > 0;
                 }
+
                 generateAnimate(frontView, swap, swapRight, downPosition);
+
                 if (swipeCurrentAction == SwipeListView.SWIPE_ACTION_CHOICE) {
                     swapChoiceState(downPosition);
                 }
